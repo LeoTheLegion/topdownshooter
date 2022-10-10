@@ -1,8 +1,6 @@
 ﻿using LeoTheLegion.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using rpg.Core;
 using rpg.Core.Component;
 using System;
 using System.Collections.Generic;
@@ -10,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace rpg
+namespace rpg.Core
 {
-    public class Player : Entity
+    public class Decortive : Entity
     {
         private string spriteName;
-        private AnimatedSpriteRendererComponent _spriteRenderer;
+        private SpriteRendererComponent _spriteRenderer;
 
-        public Player(string assetName, Vector2 pos)
+        public Decortive(string assetName, Vector2 pos)
         {
             this._position = pos;
             this.spriteName = assetName;
@@ -25,14 +23,12 @@ namespace rpg
 
         public override void Start()
         {
-            this._spriteRenderer = new AnimatedSpriteRendererComponent(this,
-                (AnimatedSprite)Resources.Load(spriteName)
-                ,8);
+            this._spriteRenderer = new SpriteRendererComponent(this, (Sprite)Resources.Load(spriteName));
         }
 
         public override void Update(GameTime gameTime)
         {
-            this._spriteRenderer.Update(gameTime);
+
         }
 
         public override void Render(SpriteBatch _spriteBatch)
