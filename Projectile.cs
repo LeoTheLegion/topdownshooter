@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LeoTheLegion.Core;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using rpg.Core.Component;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,51 +11,39 @@ using System.Threading.Tasks;
 
 namespace rpg
 {
-    public class Projectile
+    public class Projectile : Entity
     {
-        public static List<Projectile> projectiles = new List<Projectile>();
-
-        private Vector2 position;
+        private Vector2 _direction;
         private int speed = 1000;
         public int radius = 18;
-        private Dir direction;
-        private bool collided = false;
+        private KinematicMovementComponent _movementComponent;
+        private SpriteRendererComponent _spriteRenderer;
 
-        public Projectile(Vector2 position, Dir direction)
+        public Projectile(Vector2 position, Vector2 direction)
         {
-            this.position = position;
-            this.direction = direction;
+            this.Position = position;
+            this._direction = direction.NormalizedCopy();
         }
 
-        public Vector2 Position
+        public override void Start()
         {
-            get { return position; }
+            this._movementComponent = new KinematicMovementComponent(this);
+            this._spriteRenderer = new SpriteRendererComponent(this, (Sprite)Resources.Load("ball"));
+            this._spriteRenderer.RenderOffset = new Vector2(-48, -48);
         }
 
-        public bool Collided {
-            set { collided = value; } 
-            get { return collided; } 
-        }
-
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            switch (direction)
-            {
-                case Dir.Right:
-                    position.X += speed * dt;
-                    break;
-                case Dir.Left:
-                    position.X -= speed * dt;
-                    break;
-                case Dir.Down:
-                    position.Y += speed * dt;
-                    break;
-                case Dir.Up:
-                    position.Y -= speed * dt;
-                    break;
-            }
+            this._movementComponent.Velocity = this._direction * speed;
+
+            this._movementComponent.Update(gameTime);
+        }
+
+        public override void Render(SpriteBatch _spriteBatch)
+        {
+            this._spriteRenderer.Draw(_spriteBatch);
         }
     }
 }

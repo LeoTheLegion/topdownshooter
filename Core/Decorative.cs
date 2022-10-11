@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace rpg.Core
 {
-    public class Decortive : Entity
+    public class Decorative : Entity
     {
         private string spriteName;
         private SpriteRendererComponent _spriteRenderer;
 
-        public Decortive(string assetName, Vector2 pos)
+        public Decorative(string assetName, Vector2 pos)
         {
-            this._position = pos;
+            this.Position = pos;
             this.spriteName = assetName;
         }
 

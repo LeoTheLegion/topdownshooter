@@ -2,13 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using LeoTheLegion.Core;
-using Comora;
 using System.Collections.Generic;
 using rpg.Core;
+using rpg.Test;
+using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace rpg
 {
-    public enum Dir
+    public enum Direction
     {
         Down,
         Up,
@@ -19,8 +21,11 @@ namespace rpg
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private OrthographicCamera _camera;
 
         private EntityManagementSystem _entityManagementSystem;
+
+        private Player _player;
 
         public Game1()
         {
@@ -35,6 +40,9 @@ namespace rpg
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
+
+            var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, 1280, 720);
+            _camera = new OrthographicCamera(viewportAdapter);
 
             _entityManagementSystem = new EntityManagementSystem();
 
@@ -52,6 +60,8 @@ namespace rpg
                 { "playerWalkRightSheet", new SpriteSheet("Player/walkRight",1,4) },
                 { "playerWalkLeftSheet", new SpriteSheet("Player/walkLeft",1,4) },
                 { "playerWalkUpSheet", new SpriteSheet("Player/walkUp",1,4) },
+                { "backgroundSheet", new SpriteSheet("background",1,1) },
+                { "ballsheet", new SpriteSheet("ball",1,1) },
             });
 
             Resources.LoadContent(Content);
@@ -79,14 +89,28 @@ namespace rpg
                         (SpriteSheet)Resources.Load("playerWalkUpSheet"),
                         new int[]{0,1,2,3})
                 },
+                { "background",
+                    new Sprite(
+                        (SpriteSheet)Resources.Load("backgroundSheet"),
+                        0)
+                },
+                { "ball",
+                    new Sprite(
+                        (SpriteSheet)Resources.Load("ballsheet"),
+                        0)
+                },
             });
 
-            new Decortive("idle", new Vector2(200, 100));
-            new Player("playerWalkDown", new Vector2(300, 100));
-            new Player("playerWalkRight", new Vector2(400, 100));
-            new Player("playerWalkLeft", new Vector2(500, 100));
-            new Player("playerWalkUp", new Vector2(600, 100));
+            new Decorative("background", new Vector2(-500, -500)).SetSort(-1);
 
+            new Decorative("idle", new Vector2(200, 100)).SetSort(1);
+            new TestAnimationEntity("playerWalkDown", new Vector2(300, 100)).SetSort(1);
+            new TestAnimationEntity("playerWalkRight", new Vector2(400, 100)).SetSort(1);
+            new TestAnimationEntity("playerWalkLeft", new Vector2(500, 100)).SetSort(1);
+            new TestAnimationEntity("playerWalkUp", new Vector2(600, 100)).SetSort(1);
+
+            _player = new Player(new Vector2(300, 300));
+            _player.SetSort(1);
 
             _entityManagementSystem.Start();
 
@@ -99,6 +123,8 @@ namespace rpg
 
             _entityManagementSystem.Update(gameTime);
 
+            _camera.LookAt(_player.Position);
+
             base.Update(gameTime);
         }
 
@@ -108,7 +134,8 @@ namespace rpg
 
             // TODO: Add your drawing code here
 
-            _spriteBatch.Begin();
+            var transformMatrix = _camera.GetViewMatrix();
+            _spriteBatch.Begin(transformMatrix: transformMatrix);
 
             _entityManagementSystem.Render(_spriteBatch);
 

@@ -12,7 +12,7 @@ namespace LeoTheLegion.Core
 {
     public abstract class Entity
     {
-        protected Vector2 _position;
+        public Vector2 Position { get; set; }
         protected int sort = -1;
         protected bool _active;
 
@@ -43,11 +43,11 @@ namespace LeoTheLegion.Core
         public virtual void SetActive(bool active) => _active = active;
         public virtual bool GetActive() { return _active; }
 
-        public void SetPosition(Vector2 position) => this._position = position;
+        public void SetPosition(Vector2 position) => this.Position = position;
 
         public Vector2 GetPosition()
         {
-            return this._position;
+            return this.Position;
         }
     }
 }

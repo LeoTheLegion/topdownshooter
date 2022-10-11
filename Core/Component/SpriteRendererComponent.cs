@@ -15,6 +15,8 @@ namespace rpg.Core.Component
         private Entity _entity;
         private Sprite _sprite;
 
+        public Vector2 RenderOffset { get; set; }
+
         public SpriteRendererComponent(Entity entity, Sprite sprite)
         {
             _entity = entity;
@@ -23,7 +25,7 @@ namespace rpg.Core.Component
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_sprite.getSheet(), _entity.GetPosition(), _sprite.getSpriteRec(), Color.White);
+            spriteBatch.Draw(_sprite.getSheet(), _entity.GetPosition() + RenderOffset, _sprite.getSpriteRec(), Color.White);
         }
     }
 }

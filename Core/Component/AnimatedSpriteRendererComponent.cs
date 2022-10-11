@@ -13,6 +13,7 @@ namespace rpg.Core.Component
     {
         private Entity _entity;
         private AnimatedSprite _sprite;
+        private bool _isFrameControlled = false;
 
         private float timeElapsed;
         public bool IsLooping = true;
@@ -20,6 +21,8 @@ namespace rpg.Core.Component
         public int FramesPerSecond { set { timeToUpdate = (1f / value); } }
 
         protected int FrameIndex = 0;
+
+        public Vector2 RenderOffset { get; set; }
 
         public AnimatedSpriteRendererComponent(Entity entity, AnimatedSprite sprite, int fps)
         {
@@ -30,6 +33,8 @@ namespace rpg.Core.Component
 
         public void Update(GameTime gameTime)
         {
+            if (_isFrameControlled) return;
+
             timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (timeElapsed > timeToUpdate)
             {
@@ -45,7 +50,27 @@ namespace rpg.Core.Component
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_sprite.getSheet(), _entity.GetPosition(), _sprite.getFrame(FrameIndex), Color.White);
+            spriteBatch.Draw(_sprite.getSheet(), _entity.GetPosition() + RenderOffset, _sprite.getFrame(FrameIndex), Color.White);
+        }
+
+        public void setAnimationTo(AnimatedSprite animatedSprite)
+        {
+            this._sprite = animatedSprite;
+        }
+
+        public void GainFrameControl()
+        {
+            _isFrameControlled = true;
+        }
+
+        public void ReleaseFrameControl()
+        {
+            _isFrameControlled = false;
+        }
+
+        public void setFrameTo(int v)
+        {
+            this.FrameIndex = v;
         }
     }
 }
