@@ -59,9 +59,9 @@ namespace LeoTheLegion.Core.Collision
 
         private bool CircleCircleCollision(CircleCollider col1, CircleCollider col2)
         {
-            float sum = col1.radius + col2.radius;
+            float sum = col1.Radius + col2.Radius;
 
-            return (Vector2.Distance(col1.position, col2.position) < sum);
+            return (Vector2.Distance(col1.Position, col2.Position) < sum);
         }
     }
 }

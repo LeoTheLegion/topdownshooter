@@ -8,5 +8,11 @@ namespace LeoTheLegion.Core.Collision
 {
     public abstract class Collider
     {
+        public Entity Entity { get; protected set; }
+
+        protected Collider(Entity entity)
+        {
+            Entity = entity;
+        }
     }
 }

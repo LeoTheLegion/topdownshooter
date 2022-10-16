@@ -39,8 +39,9 @@ namespace LeoTheLegion.Core
         }
         public static void Unregister(Entity e)
         {
-            _INSTANCE._entities.Remove(e);
+            if (e._destroyed) return;
             _INSTANCE._OnUnregister?.Invoke(e);
+            e._destroyed = true;
         }
 
         public void Start()
@@ -64,6 +65,8 @@ namespace LeoTheLegion.Core
                 if (_entities[i].GetActive())
                     _entities[i].Update(_gameTime);
             }
+
+            _entities.RemoveAll(e => e._destroyed);
         }
 
         public void Render(SpriteBatch _spriteBatch)

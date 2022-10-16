@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using rpg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,12 @@ namespace LeoTheLegion.Core.Collision
 {
     public class CircleCollider : Collider
     {
-        public Vector2 position { set; get; }
-        public float radius { set; get; }
+        public float Radius { set; get; }
+        public Vector2 Position { get { return this.Entity.Position; } }
+
+        public CircleCollider(Entity e, int radius): base(e)
+        {
+            this.Radius = radius;
+        }
     }
 }

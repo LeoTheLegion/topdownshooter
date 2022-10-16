@@ -7,6 +7,7 @@ using rpg.Core;
 using rpg.Test;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
+using LeoTheLegion.Core.Collision;
 
 namespace rpg
 {
@@ -24,6 +25,8 @@ namespace rpg
         private OrthographicCamera _camera;
 
         private EntityManagementSystem _entityManagementSystem;
+        private CollisionManagementSystem _collisionManagement;
+        private GameController _gameController;
 
         private Player _player;
 
@@ -45,8 +48,13 @@ namespace rpg
             _camera = new OrthographicCamera(viewportAdapter);
 
             _entityManagementSystem = new EntityManagementSystem();
+            _collisionManagement = new CollisionManagementSystem();
 
-           
+            _entityManagementSystem._OnRegister += _collisionManagement.Register;
+            _entityManagementSystem._OnUnregister += _collisionManagement.Unregister;
+
+            _gameController = new GameController();
+
             base.Initialize();
         }
 
@@ -62,6 +70,7 @@ namespace rpg
                 { "playerWalkUpSheet", new SpriteSheet("Player/walkUp",1,4) },
                 { "backgroundSheet", new SpriteSheet("background",1,1) },
                 { "ballsheet", new SpriteSheet("ball",1,1) },
+                { "skullsheet", new SpriteSheet("skull",1,10) },
             });
 
             Resources.LoadContent(Content);
@@ -99,21 +108,26 @@ namespace rpg
                         (SpriteSheet)Resources.Load("ballsheet"),
                         0)
                 },
+                { "skull",
+                    new AnimatedSprite(
+                        (SpriteSheet)Resources.Load("skullsheet"),
+                        new int[]{0,1,2,3,4,5,6,7,8,9})
+                },
             });
 
             new Decorative("background", new Vector2(-500, -500)).SetSort(-1);
 
-            new Decorative("idle", new Vector2(200, 100)).SetSort(1);
-            new TestAnimationEntity("playerWalkDown", new Vector2(300, 100)).SetSort(1);
-            new TestAnimationEntity("playerWalkRight", new Vector2(400, 100)).SetSort(1);
-            new TestAnimationEntity("playerWalkLeft", new Vector2(500, 100)).SetSort(1);
-            new TestAnimationEntity("playerWalkUp", new Vector2(600, 100)).SetSort(1);
+            //new Decorative("idle", new Vector2(200, 100)).SetSort(1);
+            //new TestAnimationEntity("playerWalkDown", new Vector2(300, 100)).SetSort(1);
+            //new TestAnimationEntity("playerWalkRight", new Vector2(400, 100)).SetSort(1);
+            //new TestAnimationEntity("playerWalkLeft", new Vector2(500, 100)).SetSort(1);
+            //new TestAnimationEntity("playerWalkUp", new Vector2(600, 100)).SetSort(1);
+            //new TestAnimationEntity("skull", new Vector2(700, 100)).SetSort(1);
 
             _player = new Player(new Vector2(300, 300));
             _player.SetSort(1);
 
             _entityManagementSystem.Start();
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -121,7 +135,11 @@ namespace rpg
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            _gameController.Update(gameTime);
+
             _entityManagementSystem.Update(gameTime);
+
+            _collisionManagement.CheckForCollisions();
 
             _camera.LookAt(_player.Position);
 

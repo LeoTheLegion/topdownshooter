@@ -12,6 +12,5 @@ namespace LeoTheLegion.Core.Collision
         bool IsColliderActive();
         Collider GetCollider();
         void hit(ICollide collide);
-        Entity GetEntity();
     }
 }
